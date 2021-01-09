@@ -90,18 +90,21 @@ func printLabel(respWriter http.ResponseWriter, req *http.Request) {
 	err = json.Unmarshal(body, &rows)
 
 	if err != nil {
-		fmt.Printf("err: %+v\n", err)
+		fmt.Printf("err: %+v body: %s\n", err, string(body))
 		respWriter.WriteHeader(500)
 		return
 	}
 
 	for _, row := range rows {
-		fmt.Printf("Printing %d labels with text: %s\n", row.Count, row.Text)
-		err := spoolJob(row.Text, row.Count)
-		if err != nil {
-			respWriter.WriteHeader(500)
-			fmt.Printf("Error printing %s", row.Text)
-			return
+		if row.Count > 0 {
+			fmt.Printf("Printing %d labels with text: %s\n\n", row.Count, row.Text)
+			err := spoolJob(row.Text, row.Count)
+			if err != nil {
+				respWriter.WriteHeader(500)
+				fmt.Printf("Error printing %s	\n", row.Text)
+				return
+			}
+			fmt.Printf("Print successful")
 		}
 	}
 }
@@ -143,13 +146,13 @@ func spoolJob(text string, copies int) error {
 		return fmt.Errorf("Couldn't start command: %+v", err)
 	}
 
-	fmt.Printf("Waiting...")
+	fmt.Printf("Waiting for lpr to complete...\n")
 	err = cmd.Wait()
 
 	if err != nil {
 		return fmt.Errorf("Wait failure: %+v", err)
 	}
 
-	fmt.Printf("Command executed successfully")
+	fmt.Printf("lpr executed successfully\n")
 	return nil
 }
