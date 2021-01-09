@@ -1,4 +1,3 @@
-import logo from './logo.svg';
 import './App.css';
 import Row from './Row.js';
 import {Component} from "react";
@@ -12,11 +11,11 @@ class App extends Component {
     this.state = {
       row1: {
         text: "Oliver\n" + getCurrentDate(),
-        count: 5
+        count: 4
       },
       row2: {
         text: "Alex\n" + getCurrentDate(),
-        count: 5
+        count: 7
       }
     };
 
@@ -27,9 +26,17 @@ class App extends Component {
   handleChange(t) {
     return function (row, field) {
       return function (event) {
-        console.log("change! " + row + "field: " + field + " " + event.target.value + " state: " + JSON.stringify(t.state))
         t.setState((state) => {
-          state[row][field] = event.target.value
+          switch (field) {
+            case "count":
+              state[row][field] = parseInt(event.target.value)
+              break
+            case "text":
+              state[row][field] = event.target.value
+              break
+            default:
+              alert("Unknown field: " + field)
+          }
           return state
         })
       }
@@ -38,15 +45,14 @@ class App extends Component {
 
   handleSubmit(event) {
     console.log("State is:" + JSON.stringify(this.state))
-    alert(this.state)
     axios.post('/printLabel', JSON.stringify(this.state))
         .then(function (response) {
           if (response.status === 200) {
-            console.log("Done!")
+            alert("Success!")
           }
         })
         .catch(function (error) {
-          console.log("Error: " + error)
+          alert("Error: " + error)
         });
 
     event.preventDefault();
@@ -57,7 +63,6 @@ class App extends Component {
     const rows = Object.entries(this.state).map((key) => {
       const row = key[0]
       const data = key[1]
-      console.log("V: " + row)
       return (<Row name={row} key={row} text={data.text} count={data.count} cb={this.handleChange(this)}/>)
       }
     );

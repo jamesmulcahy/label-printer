@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Label Printer",
+  "name": "Lunch Label Printer",
   "icons": [
     {
       "src": "favicon.ico",
