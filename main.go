@@ -61,7 +61,7 @@ func main() {
 	r := mux.NewRouter()
 	r.HandleFunc("/printLabel", printLabel)
 
-	spa := spaHandler{staticPath: "ui/build", indexPath: "index.html"}
+	spa := spaHandler{staticPath: "/usr/share/label-printer/ui", indexPath: "index.html"}
 	r.PathPrefix("/").Handler(spa)
 
 	http.Handle("/", r)
